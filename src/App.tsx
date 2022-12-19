@@ -1,4 +1,4 @@
-import { useRef, useEffect, RefCallback, useCallback } from "react";
+import { useRef, RefCallback, useCallback } from "react";
 import { InputImage, Pose, Results } from "@mediapipe/pose";
 import { ControlPanel, SourcePicker } from "@mediapipe/control_utils";
 import "@mediapipe/control_utils/control_utils.css";
@@ -54,6 +54,22 @@ function App() {
       new SourcePicker({
         onFrame: async (input, size) => {
           console.log("%cApp.tsx line:56 input", "color: #26bfa5;", input);
+
+          const aspect = size.height / size.width;
+          let width, height;
+          if (window.innerWidth > window.innerHeight) {
+            height = window.innerHeight;
+            width = height / aspect;
+          } else {
+            width = window.innerWidth;
+            height = width * aspect;
+          }
+
+          if (!canvasRef.current) return;
+
+          canvasRef.current.width = width;
+          canvasRef.current.height = height;
+
           draw({ image: input });
         },
       }),
@@ -65,8 +81,8 @@ function App() {
       <canvas
         ref={canvasRef}
         style={{
-          width: "100%",
           display: "block",
+          width: "20%",
         }}
       />
       <div
